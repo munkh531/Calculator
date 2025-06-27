@@ -18,9 +18,62 @@ let eight = document.getElementById("eight");
 let nine = document.getElementById("nine");
 let operationScreen = document.getElementById("operationScreen");
 
+
 allClear.addEventListener("click", () => 
-    operationScreen.textContent = "asdf"
+    operationScreen.textContent = ""
 );
+clear.addEventListener("click", () => 
+    operationScreen.textContent = operationScreen.textContent.trim().slice(0,-1)
+);
+div.addEventListener("click", () => 
+    operationScreen.textContent += "/"
+);
+sub.addEventListener("click", () => 
+    operationScreen.textContent += "-"
+);
+multi.addEventListener("click", () => 
+    operationScreen.textContent += "*"
+);
+plus.addEventListener("click", () => 
+    operationScreen.textContent += "+"
+);
+dot.addEventListener("click", () => 
+    operationScreen.textContent += "."
+);
+equal.addEventListener("click", () => 
+    operationScreen.textContent += "="
+);
+zero.addEventListener("click", () => 
+    operationScreen.textContent += "0"
+);
+one.addEventListener("click", () => 
+    operationScreen.textContent += "1"
+);
+two.addEventListener("click", () => 
+    operationScreen.textContent += "2"
+);
+three.addEventListener("click", () => 
+    operationScreen.textContent += "3"
+);
+four.addEventListener("click", () => 
+    operationScreen.textContent += "4"
+);
+five.addEventListener("click", () => 
+    operationScreen.textContent += "5"
+);
+six.addEventListener("click", () => 
+    operationScreen.textContent += "6"
+);
+seven.addEventListener("click", () => 
+    operationScreen.textContent += "7"
+);
+eight.addEventListener("click", () => 
+    operationScreen.textContent += "8"
+);
+nine.addEventListener("click", () => 
+    operationScreen.textContent += "9"
+);
+
 
 function add(num1, num2){
     return num1 + num2;
