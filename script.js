@@ -18,65 +18,25 @@ let eight = document.getElementById("eight");
 let nine = document.getElementById("nine");
 let operationScreen = document.getElementById("operationScreen");
 
+//state variables
+let firstNumner = "";
+let secondNumber = "";
+let currentOperator = null;
+let resultDisplayed = false;
 
-allClear.addEventListener("click", () => 
-    operationScreen.textContent = ""
-);
-clear.addEventListener("click", () => 
-    operationScreen.textContent = operationScreen.textContent.trim().slice(0,-1)
-);
-div.addEventListener("click", () => 
-    operationScreen.textContent += "/"
-);
-sub.addEventListener("click", () => 
-    operationScreen.textContent += "-"
-);
-multi.addEventListener("click", () => 
-    operationScreen.textContent += "*"
-);
-plus.addEventListener("click", () => 
-    operationScreen.textContent += "+"
-);
-dot.addEventListener("click", () => 
-    operationScreen.textContent += "."
-);
-equal.addEventListener("click", () => 
-    operationScreen.textContent += "="
-);
-zero.addEventListener("click", () => 
-    operationScreen.textContent += "0"
-);
-one.addEventListener("click", () => 
-    operationScreen.textContent += "1"
-);
-two.addEventListener("click", () => 
-    operationScreen.textContent += "2"
-);
-three.addEventListener("click", () => 
-    operationScreen.textContent += "3"
-);
-four.addEventListener("click", () => 
-    operationScreen.textContent += "4"
-);
-five.addEventListener("click", () => 
-    operationScreen.textContent += "5"
-);
-six.addEventListener("click", () => 
-    operationScreen.textContent += "6"
-);
-seven.addEventListener("click", () => 
-    operationScreen.textContent += "7"
-);
-eight.addEventListener("click", () => 
-    operationScreen.textContent += "8"
-);
-nine.addEventListener("click", () => 
-    operationScreen.textContent += "9"
-);
+//animation 
+function flashButton(buttonElement) {
+    if (!buttonElement) return;
+    buttonElement.classList.add("key-pressed");
+    setTimeout(() => {
+        buttonElement.classList.remove("key-pressed");
+    }, 100);
+}
 
 
+//operations
 function add(num1, num2){
-    return num1 + num2;
+    return num1+ num2;
 }
 function subtract(num1, num2){
     return num1 - num2;
@@ -85,24 +45,160 @@ function multiply(num1, num2){
     return num1 * num2;
 }
 function divide(num1, num2){
+    if(num2 === 0){
+        alert("You can't divide by zero!");
+        return 0;
+    }
     return num1 / num2;
 }
 
-function operate(num1, oper, num2){
+function operate(oper, num1, num2){
     switch(oper){
         case "+":
-            add(num1, num2)
-            break;
+            return add(num1, num2);
         case "-":
-            subtract(num1, num2)
-            break;
+            return subtract(num1, num2);
         case "*":
-            multiply(num1, num2)
-            break;
+            return multiply(num1, num2);
         case "/":
-            divide(num1, num2)
-            break;
+            return divide(num1, num2);
         default:
-            return null
+            return 0;
     }
 }
+//update display
+function updateDisplay(value){
+    if(resultDisplayed){
+        operationScreen.textContent = "";
+        resultDisplayed = false;
+    }
+    operationScreen.textContent += value;
+}
+
+//number buttons
+[zero, one, two, three, four, five, six, seven, eight, nine, dot].forEach(btn =>{
+    btn.addEventListener("click", () => {
+        updateDisplay(btn.textContent);
+    });
+});
+
+//operator buttons
+[plus, sub, multi, div].forEach(op =>{
+    op.addEventListener("click", ()=>{
+        if(currentOperator !== null) return; //prevent chaining
+
+        firstNumber = operationScreen.textContent;
+        currentOperator = op.textContent;
+        updateDisplay(currentOperator);
+    });
+});
+
+
+// Equal button logic
+equal.addEventListener("click", () => {
+    if (currentOperator === null) return;
+
+    let fullExpression = operationScreen.textContent;
+    let parts = fullExpression.split(currentOperator);
+
+    if (parts.length < 2) return;
+
+    secondNumber = parts[1];
+
+    let num1 = parseFloat(firstNumber);
+    let num2 = parseFloat(secondNumber);
+
+    let result = operate(currentOperator, num1, num2);
+
+    operationScreen.textContent = Math.floor(result * 100) / 100;
+    firstNumber = operationScreen.textContent;
+    secondNumber = "";
+    currentOperator = null;
+    resultDisplayed = true;
+});
+
+// All Clear
+allClear.addEventListener("click", () => {
+    operationScreen.textContent = "";
+    firstNumber = "";
+    secondNumber = "";
+    currentOperator = null;
+    resultDisplayed = false;
+});
+
+
+// Clear
+clear.addEventListener("click", () => {
+    operationScreen.textContent = operationScreen.textContent.trim().slice(0, -1);
+});
+
+document.addEventListener("keydown", (e) => {
+    document.activeElement.blur();
+    const key = e.key;
+
+    // Map key to button element
+    const keyMap = {
+        "0": zero,
+        "1": one,
+        "2": two,
+        "3": three,
+        "4": four,
+        "5": five,
+        "6": six,
+        "7": seven,
+        "8": eight,
+        "9": nine,
+        ".": dot,
+        "+": plus,
+        "-": sub,
+        "*": multi,
+        "/": div,
+        "Enter": equal,
+        "=": equal,
+        "Backspace": clear,
+        "c": allClear,
+        "C": allClear
+    };
+
+    // Perform flash if button exists
+    if (key in keyMap) {
+        flashButton(keyMap[key]);
+    }
+
+    // Handle functionality
+    if (!isNaN(key)) {
+        updateDisplay(key);
+    } else if (key === ".") {
+        updateDisplay(".");
+    } else if (["+", "-", "*", "/"].includes(key)) {
+        if (currentOperator !== null) return;
+        firstNumber = operationScreen.textContent;
+        currentOperator = key;
+        updateDisplay(key);
+    } else if (key === "Enter" || key === "=") {
+        equal.click();
+    } else if (key === "Backspace") {
+        clear.click();
+    } else if (key.toLowerCase() === "c") {
+        allClear.click();
+    }
+});
+
+const darkToggle = document.getElementById("darkModeToggle");
+
+// Load preference from localStorage
+if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark");
+    darkToggle.checked = true;
+}
+
+// Listen for toggle changes
+darkToggle.addEventListener("change", () => {
+    if (darkToggle.checked) {
+        document.body.classList.add("dark");
+        localStorage.setItem("darkMode", "enabled");
+    } else {
+        document.body.classList.remove("dark");
+        localStorage.setItem("darkMode", "disabled");
+    }
+});
