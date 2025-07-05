@@ -76,10 +76,25 @@ function updateDisplay(value){
 }
 
 //number buttons
-[zero, one, two, three, four, five, six, seven, eight, nine, dot].forEach(btn =>{
+[zero, one, two, three, four, five, six, seven, eight, nine].forEach(btn =>{
     btn.addEventListener("click", () => {
         updateDisplay(btn.textContent);
     });
+});
+
+//dot button
+dot.addEventListener("click", () => {
+    // Get the current text on screen
+    const currentText = operationScreen.textContent;
+
+    // Split by operator to isolate the last number segment
+    const parts = currentText.split(/[\+\-\*\/]/);
+    const lastPart = parts[parts.length - 1];
+
+    // Prevent multiple dots in the same number
+    if (!lastPart.includes(".")) {
+        updateDisplay(".");
+    }
 });
 
 //operator buttons
@@ -131,7 +146,7 @@ allClear.addEventListener("click", () => {
 clear.addEventListener("click", () => {
     operationScreen.textContent = operationScreen.textContent.trim().slice(0, -1);
 });
-
+//Keyboard event listener
 document.addEventListener("keydown", (e) => {
     document.activeElement.blur();
     const key = e.key;
@@ -169,7 +184,12 @@ document.addEventListener("keydown", (e) => {
     if (!isNaN(key)) {
         updateDisplay(key);
     } else if (key === ".") {
-        updateDisplay(".");
+        const currentText = operationScreen.textContent;
+        const parts = currentText.split(/[\+\-\*\/]/);
+        const lastPart = parts[parts.length - 1];
+        if (!lastPart.includes(".")) {
+            updateDisplay(".");
+        }
     } else if (["+", "-", "*", "/"].includes(key)) {
         if (currentOperator !== null) return;
         firstNumber = operationScreen.textContent;

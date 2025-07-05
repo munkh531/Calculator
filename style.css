@@ -73,6 +73,7 @@
     background-color: #33baff;
 }
 
+/* Dark mode style */
 body.dark {
     background-color: #121212;
     color: #e0e0e0;
